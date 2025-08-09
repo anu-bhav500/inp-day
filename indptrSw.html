@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Independence Day Wish</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        color:#c97cf0;
+        background: linear-gradient(to bottom, #FF9933, white, #138808);
+        background-size: cover;
+        height: 100vh;
+        overflow: hidden;
+    }
+    h1 {
+        margin-top: 20px;
+        font-size: 2.5rem;
+        text-shadow: 2px 2px 4px #000;
+    }
+    .container {
+        position: relative;
+        z-index: 2;
+        max-width: 90%;
+        margin: auto;
+    }
+    input {
+        padding: 10px;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 5px;
+        width: 80%;
+        max-width: 300px;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        background: #ff6600;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    button:hover {
+        background: #e65c00;
+    }
+    .wish {
+        margin-top: 20px;
+        font-size: 2rem;
+        font-weight: bold;
+        animation: fadeIn 2s ease-in-out, colorChange 5s infinite alternate;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes colorChange {
+        0% { color: #ffcc00; }
+        50% { color: #db4646; }
+        100% { color: #00ff00; }
+    }
+    .timer {
+        margin-top: 10px;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
+
+    }
+    footer {
+    position: fixed;
+    bottom: 0;
+    color: aqua;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    background: color(srgb rgb(41, 22, 184) green blue); /* or set a background if you want */
+    font-size: 0.9rem;
+}
+
+</style>
+</head>
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="container">
+    <h1> Independence Day Countdown </h1>
+    <input type="text" id="name" placeholder="Enter your name">
+    <br>
+    <button onclick="generateWish()">Generate Wish</button>
+    <div class="wish" id="wishText"></div>
+    <div class="timer" id="countdown"></div>
+</div>
+<footer>
+    &copy; 2025 Anubhav Koner. All rights reserved | Independence Day Wishes | Designed with ❤️ for India
+</footer>
+
+<script>
+// Countdown Timer
+function updateCountdown() {
+    const target = new Date(new Date().getFullYear(), 7, 15, 0, 0, 0);
+    const now = new Date();
+    const diff = target - now;
+
+    if (diff <= 0) {
+        document.getElementById("countdown").innerHTML = "Happy Independence Day! 🎉";
+        return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("countdown").innerHTML =
+        `${hours}h ${minutes}m ${seconds}s remaining`;
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// Generate Wish & Trigger Fireworks
+function generateWish() {
+    const name = document.getElementById("name").value.trim();
+    if (name === "") {
+        alert("Please enter your name!");
+        return;
+    }
+    document.getElementById("wishText").innerHTML =
+        `🎆 Advance Happy Independence Day, ${name}! Let's honor the sacrifices of our heroes who fought for our freedom🎆`;
+    launchFireworks();
+}
+
+// Fireworks Animation
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+let particles = [];
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function createParticle(x, y) {
+    return {
+        x: x,
+        y: y,
+        radius: Math.random() * 3 + 2,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        speedX: (Math.random() - 0.5) * 6,
+        speedY: (Math.random() - 0.5) * 6,
+        life: 100
+    };
+}
+
+function launchFireworks() {
+    for (let i = 0; i < 20; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height / 2;
+        for (let j = 0; j < 50; j++) {
+            particles.push(createParticle(x, y));
+        }
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p, index) => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.life--;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        if (p.life <= 0) {
+            particles.splice(index, 1);
+        }
+    });
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+
+
+</html>
